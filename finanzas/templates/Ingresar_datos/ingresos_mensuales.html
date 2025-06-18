@@ -1,11 +1,11 @@
 {% extends 'dashboard/index.html' %}
 
 {% block content %}
-<div class="register">
+<div>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Register</button>
+        <button type="submit">Subir Ingresos!</button>
     </form>
 </div>
 {% endblock %}
