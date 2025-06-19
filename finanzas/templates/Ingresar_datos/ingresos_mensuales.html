@@ -2,6 +2,14 @@
 
 {% block content %}
 <div>
+    <ul>
+        {% for ingreso in ingresos %}
+            <li>{{ ingreso.fecha }}: ${{ ingreso.monto }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}

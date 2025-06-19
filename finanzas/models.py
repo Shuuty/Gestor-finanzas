@@ -25,7 +25,7 @@ class SaldoUsuario(models.Model):
 
 class IngresoMensual(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    fecha = models.DateField()
+    fecha = models.DateField(auto_now_add=True)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
 
 class CategoriaGastos(models.Model):

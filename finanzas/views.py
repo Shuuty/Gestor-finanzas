@@ -12,6 +12,8 @@ def home(request):
 
 @login_required
 def ingresos_mensuales(request):
+    ingresosMensuales = models.IngresoMensual.objects.filter(usuario=request.user).order_by('-fecha')[:10]
+
     if request.method == 'POST':
         form = forms.IngresoMensualForm(request.POST)
         if form.is_valid():
@@ -24,8 +26,8 @@ def ingresos_mensuales(request):
             saldo.save()
     else:
         form = forms.IngresoMensualForm()
-
-    return render(request, 'Ingresar_datos/ingresos_mensuales.html', {'form': form})
+        
+    return render(request, 'Ingresar_datos/ingresos_mensuales.html', {'form': form, 'ingresos': ingresosMensuales})
 
             
  
