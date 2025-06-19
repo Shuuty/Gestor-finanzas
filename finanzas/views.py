@@ -31,6 +31,7 @@ def ingresos_mensuales(request):
 
 @login_required
 def gastos_mensuales(request):
+    gastos = models.Gastos.objects.filter(user=request.user).order_by('-fecha')[:10]
     if request.method == 'POST':
         form = forms.GastosForm(request.POST)
         if form.is_valid():
@@ -44,7 +45,7 @@ def gastos_mensuales(request):
     else:
         form = forms.GastosForm()
 
-    return render(request, 'Ingresar_datos/gastos_mensuales.html', {'form': form})
+    return render(request, 'Ingresar_datos/gastos_mensuales.html', {'form': form, 'gastos': gastos})
 
             
  

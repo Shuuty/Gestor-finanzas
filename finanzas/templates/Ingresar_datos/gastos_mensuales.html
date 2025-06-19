@@ -8,4 +8,22 @@
             <button type="submit">Subir Gasto</button>
         </form>
     </div>
+    <div>
+        <h2>Ultimos 10 gastos:</h2>
+    <ul>
+        {% for gasto in gastos %}
+            <li>
+                <p>{{ gasto.nombre }}</p>
+                <p>Categoria: {{ gasto.categoria }}</p>
+                <p>Monto: ${{ gasto.monto }}</p>
+                {% if gasto.nota %}
+                    <p>Nota: {{ gasto.nota }}</p>
+                {% endif %}
+                {% if gasto.es_recurrente %}
+                    <p>Este gasto es recurrente</p>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}
