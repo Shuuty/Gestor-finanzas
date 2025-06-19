@@ -29,6 +29,23 @@ def ingresos_mensuales(request):
         
     return render(request, 'Ingresar_datos/ingresos_mensuales.html', {'form': form, 'ingresos': ingresosMensuales})
 
+@login_required
+def gastos_mensuales(request):
+    if request.method == 'POST':
+        form = forms.GastosForm(request.POST)
+        if form.is_valid():
+            gasto = form.save(commit=False)
+            gasto.user = request.user
+            gasto.save()
+
+            saldo, _ = models.SaldoUsuario.objects.get_or_create(user=request.user)
+            saldo.restar_gastos(gasto.monto)
+            saldo.save()
+    else:
+        form = forms.GastosForm()
+
+    return render(request, 'Ingresar_datos/gastos_mensuales.html', {'form': form})
+
             
  
 

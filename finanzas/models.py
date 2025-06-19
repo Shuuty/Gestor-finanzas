@@ -40,7 +40,7 @@ class Gastos(models.Model):
     nombre = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     categoria = models.ForeignKey(CategoriaGastos, on_delete=models.SET_NULL, null=True)
-    fecha = models.DateField()
+    fecha = models.DateField(auto_now_add=True)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
     nota = models.TextField(blank=True, null=True)
     es_recurrente = models.BooleanField(default=False)
