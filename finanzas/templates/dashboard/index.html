@@ -16,6 +16,14 @@
             <a href="{% url 'register_user' %}">Registrarse</a>
             <a href="{% url 'login_user' %}">Inciar Sesion</a>
         {% endif %}
+
+        {% if user.is_authenticated and saldo_usuario %}
+            <div class="Saldo_usuario">
+                Saldo disponible: ${{ saldo_usuario.disponible }}
+            </div>
+        {% endif %}
+            
+        
     </div>
     <div>
         {% block content %}

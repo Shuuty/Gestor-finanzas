@@ -1,0 +1,21 @@
+{% extends 'dashboard/index.html' %}
+
+{% block content %}
+<div>Saldo en caja de Ahorro: {{ cajaAhorro.total }}</div>
+<div>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Ingresar a caja de ahorro!</button>
+    </form>
+</div>
+<div>
+    <ul>
+        {% if historial %}
+            {% for transferencia in historial %}
+                <li>{{ transferencia.fecha }}: ${{transferencia.monto}}</li>   
+            {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}

@@ -17,10 +17,10 @@ class SaldoUsuario(models.Model):
         if saldo <= self.disponible:
             self.disponible -= saldo
             self.save()
-            ahorro, _ = CajadeAhorros.objects.get_or_create(User=self.User)
+            ahorro, _ = CajadeAhorros.objects.get_or_create(user=self.user)
             ahorro.total += saldo
             ahorro.save()
-            IngresoAhorro.objects.create(User=self.user, monto=saldo)
+            IngresoAhorro.objects.create(user=self.user, monto=saldo)
 
 
 class IngresoMensual(models.Model):
@@ -51,7 +51,7 @@ class Gastos(models.Model):
 
 class CajadeAhorros(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    total = models.DecimalField(max_digits=12, decimal_places=2)
+    total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     
 
 

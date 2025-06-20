@@ -47,6 +47,22 @@ def gastos_mensuales(request):
 
     return render(request, 'Ingresar_datos/gastos_mensuales.html', {'form': form, 'gastos': gastos})
 
+@login_required
+def ingresar_saldo_cajaAhorro(request):
+    cajaAhorro, _ = models.CajadeAhorros.objects.get_or_create(user=request.user)
+    cajaAhorroHistorial = models.IngresoAhorro.objects.filter(user=request.user).order_by('-id')[:10]
+    if request.method == 'POST':
+        form = forms.IngresoCajaAhorroForm(request.POST)
+        if form.is_valid():
+            ahorro = form.cleaned_data['monto']
+            saldo, _ = models.SaldoUsuario.objects.get_or_create(user=request.user)
+            saldo.transferir_a_ahorro(ahorro)
+            saldo.save()
+    else:
+        form = forms.IngresoCajaAhorroForm()
+
+    return render(request, 'Ingresar_datos/caja_ahorro.html', {'form': form, 'cajaAhorro': cajaAhorro, 'historial': cajaAhorroHistorial})
+
             
  
 
