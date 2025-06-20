@@ -22,6 +22,15 @@ class SaldoUsuario(models.Model):
             ahorro.save()
             IngresoAhorro.objects.create(user=self.user, monto=saldo)
 
+    def sacar_de_ahorro(self, saldo):
+        self.disponible += saldo
+        self.save()
+        ahorro, _ = CajadeAhorros.objects.get_or_create(user=self.user)
+        ahorro.total -= saldo
+        ahorro.save()
+        RetiroAhorro.objects.create(user=self.user, monto=saldo)
+
+
 
 class IngresoMensual(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -60,6 +69,10 @@ class IngresoAhorro(models.Model):
     fecha = models.DateField(auto_now_add=True)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
 
+class RetiroAhorro(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha = models.DateField(auto_now_add=True)
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
 
 class ResumenMensual(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

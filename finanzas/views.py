@@ -48,24 +48,32 @@ def gastos_mensuales(request):
     return render(request, 'Ingresar_datos/gastos_mensuales.html', {'form': form, 'gastos': gastos})
 
 @login_required
-def ingresar_saldo_cajaAhorro(request):
+def caja_Ahorro(request):
     cajaAhorro, _ = models.CajadeAhorros.objects.get_or_create(user=request.user)
-    cajaAhorroHistorial = models.IngresoAhorro.objects.filter(user=request.user).order_by('-id')[:10]
+    cajaAhorroIngresos = models.IngresoAhorro.objects.filter(user=request.user).order_by('-id')[:10]
+    cajaAhorroRetiros= models.RetiroAhorro.objects.filter(user=request.user).order_by('-id')[:10]
+
     if request.method == 'POST':
-        form = forms.IngresoCajaAhorroForm(request.POST)
+        form = forms.CajaAhorroForm(request.POST, user=request.user)
         if form.is_valid():
             ahorro = form.cleaned_data['monto']
-            saldo, _ = models.SaldoUsuario.objects.get_or_create(user=request.user)
-            saldo.transferir_a_ahorro(ahorro)
-            saldo.save()
-    else:
-        form = forms.IngresoCajaAhorroForm()
+            accion = form.cleaned_data['accion']
 
-    return render(request, 'Ingresar_datos/caja_ahorro.html', {'form': form, 'cajaAhorro': cajaAhorro, 'historial': cajaAhorroHistorial})
+            if accion == 'ingreso':
+                saldo, _ = models.SaldoUsuario.objects.get_or_create(user=request.user)
+                saldo.transferir_a_ahorro(ahorro)
+                saldo.save()
+
+            elif accion == 'retiro':
+                saldo, _ = models.SaldoUsuario.objects.get_or_create(user=request.user)
+                saldo.sacar_de_ahorro(ahorro)
+                saldo.save()
+            
+            return redirect('caja_ahorro')
+
+    else:
+        form = forms.CajaAhorroForm()
+
+    return render(request, 'Ingresar_datos/caja_ahorro.html', {'form': form, 'cajaAhorro': cajaAhorro, 'historial_ingresos': cajaAhorroIngresos, 'historial_retiros': cajaAhorroRetiros})
 
             
- 
-
-
-
-

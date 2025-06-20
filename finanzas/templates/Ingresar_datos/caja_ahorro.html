@@ -1,18 +1,28 @@
 {% extends 'dashboard/index.html' %}
 
 {% block content %}
-<div>Saldo en caja de Ahorro: {{ cajaAhorro.total }}</div>
+<div>Saldo en caja de Ahorro: ${{ cajaAhorro.total }}</div>
 <div>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Ingresar a caja de ahorro!</button>
+        <button type="submit">Realizar operacion!</button>
     </form>
 </div>
 <div>
+    <h2>Ingresos a la caja de ahorros:</h2>
     <ul>
-        {% if historial %}
-            {% for transferencia in historial %}
+        {% if historial_ingresos %}
+            {% for transferencia in historial_ingresos %}
+                <li>{{ transferencia.fecha }}: ${{transferencia.monto}}</li>   
+            {% endfor %}
+        {% endif %}
+    </ul>
+
+    <h2>Retiros a la caja de ahorros:</h2>
+    <ul>
+        {% if historial_retiros %}
+            {% for transferencia in historial_retiros %}
                 <li>{{ transferencia.fecha }}: ${{transferencia.monto}}</li>   
             {% endfor %}
         {% endif %}

@@ -23,20 +23,24 @@ class GastosForm(forms.ModelForm):
             'es_recurrente': forms.CheckboxInput(attrs={'class': 'form-control'})
         }
 
-class IngresoCajaAhorroForm(forms.ModelForm):
-    class Meta:
-        model = models.IngresoAhorro
-        fields = ['monto']
-        widgets = {
-            'monto' : forms.NumberInput(attrs={'class':'form-control'})
-        }
-        def clean_monto(self):
-            monto = self.cleaned_data['total']
-            if monto <= 0:
-                raise forms.ValidationError("El monto debe ser mayor que 0")
+class CajaAhorroForm(forms.Form):
+    monto = forms.DecimalField(label='Dinero a ingresar')
+    accion = forms.ChoiceField(
+        choices=[('ingreso', 'Ingresar'), ('retiro', 'Retirar')]
+    )
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_monto(self):
+        monto = self.cleaned_data['monto']
+        if monto <= 0:
+            raise forms.ValidationError("El monto debe ser mayor que 0")
             
-            if self.user:
-                saldoUsuario = models.SaldoUsuario.objects.filter(user=self.user).first()
-                if not saldoUsuario or monto > saldoUsuario:
-                    raise forms.ValidationError("No podes ingresar mas saldo del que tenes!")
-            return monto
+        if self.user:
+            saldoUsuario = models.SaldoUsuario.objects.filter(user=self.user).first()
+            if not saldoUsuario.disponible or monto > saldoUsuario.disponible:
+                raise forms.ValidationError("No podes ingresar mas saldo del que tenes!")
+        return monto
+        
