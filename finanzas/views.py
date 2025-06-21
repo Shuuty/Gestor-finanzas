@@ -5,10 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-def home(request):
-    saldo, _ = models.SaldoUsuario.objects.get_or_create(user=request.user)
-    saldo = saldo.disponible
-    return render(request, 'dashboard/home.html', {'saldo': saldo})
+
 
 @login_required
 def ingresos_mensuales(request):
@@ -76,4 +73,5 @@ def caja_Ahorro(request):
 
     return render(request, 'Ingresar_datos/caja_ahorro.html', {'form': form, 'cajaAhorro': cajaAhorro, 'historial_ingresos': cajaAhorroIngresos, 'historial_retiros': cajaAhorroRetiros})
 
-            
+
+

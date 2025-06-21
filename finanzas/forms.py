@@ -24,7 +24,7 @@ class GastosForm(forms.ModelForm):
         }
 
 class CajaAhorroForm(forms.Form):
-    monto = forms.DecimalField(label='Dinero a ingresar')
+    monto = forms.DecimalField(label='Monto')
     accion = forms.ChoiceField(
         choices=[('ingreso', 'Ingresar'), ('retiro', 'Retirar')]
     )
