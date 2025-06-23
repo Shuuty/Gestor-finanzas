@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class SaldoUsuario(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     disponible = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     def sumar_ingresos(self, saldo):
@@ -33,7 +33,7 @@ class SaldoUsuario(models.Model):
 
 
 class IngresoMensual(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     fecha = models.DateField(auto_now_add=True)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -62,7 +62,6 @@ class CajadeAhorros(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     
-
 
 class IngresoAhorro(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

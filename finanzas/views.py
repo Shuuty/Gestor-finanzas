@@ -15,7 +15,7 @@ def ingresos_mensuales(request):
         form = forms.IngresoMensualForm(request.POST)
         if form.is_valid():
             ingreso = form.save(commit=False)
-            ingreso.usuario = request.user
+            ingreso.user = request.user
             ingreso.save()
 
             saldo, _ = models.SaldoUsuario.objects.get_or_create(user=request.user)
