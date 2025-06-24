@@ -1,8 +1,9 @@
 from django.utils import timezone
 from datetime import date
+from decimal import Decimal
 from collections import defaultdict
 from django.db.models import Sum
-from .models import Gastos, Ingreso, IngresoAhorro, RetiroAhorro
+from .models import Gastos, IngresoMensual, IngresoAhorro, RetiroAhorro
 
 
 def obtener_datos_dashboard(user):
@@ -11,7 +12,7 @@ def obtener_datos_dashboard(user):
 
     # Totales
     total_gastos = Gastos.objects.filter(user=user, fecha__gte=inicio_mes).aggregate(total=Sum('monto'))['total'] or 0
-    total_ingresos = Ingreso.objects.filter(user=user, fecha__gte=inicio_mes).aggregate(total=Sum('monto'))['total'] or 0
+    total_ingresos = IngresoMensual.objects.filter(user=user, fecha__gte=inicio_mes).aggregate(total=Sum('monto'))['total'] or 0
     total_ahorro_mes = IngresoAhorro.objects.filter(user=user, fecha__gte=inicio_mes).aggregate(total=Sum('monto'))['total'] or 0
     total_retiros_mes = RetiroAhorro.objects.filter(user=user, fecha__gte=inicio_mes).aggregate(total=Sum('monto'))['total'] or 0
 
@@ -21,18 +22,18 @@ def obtener_datos_dashboard(user):
 
     # Porcentaje de gasto por categoría
     gastos = Gastos.objects.filter(user=user, fecha__gte=inicio_mes)
-    porcentajes_por_categoria = defaultdict(float)
+    porcentajes_por_categoria = defaultdict(lambda: Decimal('0'))
     for gasto in gastos:
         if total_ingresos > 0:
-            porcentaje = (gasto.monto / total_ingresos) * 100
-            porcentajes_por_categoria[gasto.categoria] += round(porcentaje, 2)
+            porcentaje = (gasto.monto / total_ingresos) * Decimal('100')
+            porcentajes_por_categoria[gasto.categoria] += porcentaje.quantize(Decimal('0.01'))
 
     # Alerta: gastos mayores a ingresos
     alerta = total_gastos > total_ingresos
 
     # Últimos movimientos
     ultimos_gastos = gastos.order_by('-fecha')[:5]
-    ultimos_ingresos = Ingreso.objects.filter(user=user).order_by('-fecha')[:5]
+    ultimos_ingresos = IngresoMensual.objects.filter(user=user).order_by('-fecha')[:5]
     ultimos_movimientos_ahorro = list(IngresoAhorro.objects.filter(user=user).order_by('-fecha')[:3]) + \
                                  list(RetiroAhorro.objects.filter(user=user).order_by('-fecha')[:3])
 

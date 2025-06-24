@@ -1,7 +1,95 @@
 {% extends 'dashboard/index.html' %}
+{% load static %}
 
 {% block content %}
-<div class="home">
-    <p>{{ saldo }}$</p>
+<div class="container mt-4">
+    <h2 class="mb-4">Resumen financiero del mes</h2>
+
+    {% if datos.alerta %}
+        <div class="alert alert-danger">
+            ⚠️ Estás gastando más de lo que ganás este mes.
+        </div>
+    {% endif %}
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5>Total Ingresos</h5>
+                <p>${{ datos.total_ingresos }}</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5>Total Gastos</h5>
+                <p>${{ datos.total_gastos }}</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5>Saldo Disponible</h5>
+                <p>${{ saldo_usuario.disponible }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-3 mb-4">
+        <h5>Ahorro este mes</h5>
+        <p>{{ datos.porcentaje_ahorro }}% de tus ingresos fueron destinados al ahorro.</p>
+    </div>
+
+    <div class="card p-3 mb-4">
+        <h5>Porcentaje de gastos por categoría</h5>
+        <ul>
+            {% for categoria, porcentaje in datos.porcentajes_por_categoria.items %}
+                <li>{{ categoria }}: {{ porcentaje }}%</li>
+            {% empty %}
+                <li>No hay gastos registrados este mes.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card p-3 mb-4">
+        <h5>Gasto promedio diario</h5>
+        <p>${{ datos.gasto_promedio_diario }}</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card p-3 mb-4">
+                <h5>Últimos gastos</h5>
+                <ul>
+                    {% for gasto in datos.ultimos_gastos %}
+                        <li>{{ gasto.fecha }} - {{ gasto.categoria }}: ${{ gasto.monto }}</li>
+                    {% empty %}
+                        <li>No hay gastos recientes.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-3 mb-4">
+                <h5>Últimos ingresos</h5>
+                <ul>
+                    {% for ingreso in datos.ultimos_ingresos %}
+                        <li>{{ ingreso.fecha }}: ${{ ingreso.monto }}</li>
+                    {% empty %}
+                        <li>No hay ingresos recientes.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-3 mb-4">
+        <h5>Últimos movimientos en caja de ahorro</h5>
+        <ul>
+            {% for mov in datos.ultimos_movimientos_ahorro %}
+                <li>{{ mov.fecha }}: ${{ mov.monto }}</li>
+            {% empty %}
+                <li>No hay movimientos recientes.</li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 {% endblock %}

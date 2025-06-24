@@ -1,15 +1,20 @@
 from django.shortcuts import render, redirect
 from . import forms
 from . import models
+from . import utils
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+@login_required
+def home(request):
+    datos_home = utils.obtener_datos_dashboard(request.user)
+    return render(request, 'dashboard/home.html', {'datos': datos_home})
 
 
 @login_required
 def ingresos_mensuales(request):
-    ingresosMensuales = models.IngresoMensual.objects.filter(usuario=request.user).order_by('-fecha')[:10]
+    ingresosMensuales = models.IngresoMensual.objects.filter(user=request.user).order_by('-fecha')[:10]
 
     if request.method == 'POST':
         form = forms.IngresoMensualForm(request.POST)
